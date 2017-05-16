@@ -69,4 +69,11 @@ service 'ssh' do
     %w(aix) => [:start],
     'default' => [:enable, :start]
   )
+
+  if node['platform'] == 'ubuntu' &&
+      Chef::VersionConstraint.new('>= 16.04').include?(node['platform_version'])
+    # Try to solve "No such file or directory - /sbin/status"
+    # error with ubuntu 16.04 using docker-kitchen
+    provider Chef::Provider::Service::Systemd
+  end
 end
